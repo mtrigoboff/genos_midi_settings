@@ -19,7 +19,8 @@ def main(file_name):
     hdr_str, setting_flags = \
         struct.unpack(f'> {HDR_STR_LGTH}s {HDR_FLAGS_LGTH}H 2x',
                       file_stream.read(HDR_LGTH))
-    print(f'{hdr_str}, 0x{setting_flags:02X}')
+    flags_str = f'{setting_flags:2X}'.zfill(4)	# 4 hex digits via zero fill if needed
+    print(f'{hdr_str}, 0x{flags_str}')
 
     # read individual settings
     for i in range(10):
