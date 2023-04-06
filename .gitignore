@@ -1,4 +1,2 @@
-genos_files
 genos_files/**
-motif2text
-motif2text/**
+motif2text.py
