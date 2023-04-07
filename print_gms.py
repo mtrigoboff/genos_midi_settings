@@ -73,9 +73,10 @@ def main(genos_file):
 	# set up directory for output files
 	settings_file_dir = os.path.join(genos_file_path, genos_file_root)
 	if os.path.isdir(settings_file_dir):
-		for root, _, files in os.walk(settings_file_dir):	# delete previous directory contents
-			for f in files:
-				os.unlink(os.path.join(root, f))
+		# for root, _, files in os.walk(settings_file_dir):	# delete previous directory contents
+		# 	for f in files:
+		# 		os.unlink(os.path.join(root, f))
+		pass
 	else:
 		os.mkdir(settings_file_dir)
 
@@ -111,6 +112,6 @@ def main(genos_file):
 	return ''
 
 if __name__ == '__main__':
-	ret_str = main('genos_files/pg1.msu')
+	ret_str = main(sys.argv[1])
 	if ret_str != '':
 		print(f'main() -> {ret_str}')
