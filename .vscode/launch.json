@@ -9,7 +9,7 @@
 			"type": "python",
 			"request": "launch",
 			"program": "${file}",
-			"args": ["genos_files/pg1.msu"],
+			"args": ["genos_files/pg1.msu", "True"],
 			"console": "integratedTerminal",
 			"justMyCode": true
 		}

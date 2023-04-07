@@ -47,7 +47,7 @@ class MIDISettings:
 			   f'{"Transpose MIDI Input:":26s} {self._off_on_labels[self._xpose_midi]}\n'	\
 			   f'{"Start/Stop:":26s} {self._start_stop_labels[self._start_stop]}\n'
 
-def main(genos_file):
+def main(genos_file, analyze):
 
 	console_out = sys.stdout
 
@@ -73,10 +73,10 @@ def main(genos_file):
 	# set up directory for output files
 	settings_file_dir = os.path.join(genos_file_path, genos_file_root)
 	if os.path.isdir(settings_file_dir):
-		# for root, _, files in os.walk(settings_file_dir):	# delete previous directory contents
-		# 	for f in files:
-		# 		os.unlink(os.path.join(root, f))
-		pass
+		if not analyze:
+			for root, _, files in os.walk(settings_file_dir):	# delete previous directory contents
+				for f in files:
+					os.unlink(os.path.join(root, f))
 	else:
 		os.mkdir(settings_file_dir)
 
@@ -92,10 +92,11 @@ def main(genos_file):
 			# unpack settings bytes
 			settings = MIDISettings(settings_bytes)
 
-			# write out settings bytes for comparison
-			settings_bytes_file = open(os.path.join(settings_file_dir, settings.name + '.stg'), 'wb')
-			settings_bytes_file.write(settings_bytes)
-			settings_bytes_file.close()
+			if analyze:
+				# write out settings bytes for comparison
+				settings_bytes_file = open(os.path.join(settings_file_dir, settings.name + '.stg'), 'wb')
+				settings_bytes_file.write(settings_bytes)
+				settings_bytes_file.close()
 
 			# print settings info
 			settings_txt_file = open(os.path.join(settings_file_dir, settings.name + '.txt'), 'w')
@@ -112,6 +113,6 @@ def main(genos_file):
 	return ''
 
 if __name__ == '__main__':
-	ret_str = main(sys.argv[1])
+	ret_str = main(sys.argv[1], bool(sys.argv[2]))
 	if ret_str != '':
 		print(f'main() -> {ret_str}')
