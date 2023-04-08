@@ -1,3 +1,4 @@
 genos_files/**
+midi_sysex_bug/**
 motif2text.py
 printMotifFile.py
