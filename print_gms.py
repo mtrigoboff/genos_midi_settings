@@ -16,10 +16,10 @@ class MIDISettings:
 	TRANSMIT_CLOCK_LGTH =	  1
 	TRANSPOSE_MIDI_LGTH =  	  1
 	START_STOP =  			  1
-	SYS_EX_MSGS =			  1		# one 2-byte short
+	SYSEX_MSGS =			  1		# one 2-byte short
 	PADDING_LAST =			SETTINGS_LGTH - SETTINGS_NAME_LGTH - PADDING1 - LOCAL_CONTROL \
 							- CLOCK_LGTH - TRANSMIT_CLOCK_LGTH - TRANSPOSE_MIDI_LGTH - START_STOP \
-							- 2 * SYS_EX_MSGS
+							- 2 * SYSEX_MSGS
 
 	separator = '----------------------------------------------------------------------------\n'
 
@@ -44,7 +44,7 @@ class MIDISettings:
 		self._file_name = file_name
 
 		settings_name_bytes, self._local_control, self._clock, self._xmit_clock, \
-		self._xpose_midi, self._start_stop, self._sys_ex_msgs = \
+		self._xpose_midi, self._start_stop, self._sysex_msgs = \
 			struct.unpack(f'> \
 		 					{self.SETTINGS_NAME_LGTH}s			\
 							{self.PADDING1}x					\
@@ -53,7 +53,7 @@ class MIDISettings:
 		 					{self.TRANSMIT_CLOCK_LGTH}B			\
 		 					{self.TRANSPOSE_MIDI_LGTH}B			\
 		 					{self.START_STOP}B					\
-		 					{self.SYS_EX_MSGS}H					\
+		 					{self.SYSEX_MSGS}H					\
 		 					{self.PADDING_LAST}x',
 						  settings_bytes)
 
@@ -73,18 +73,18 @@ class MIDISettings:
 		local_ctl_str += '\n'
 		return local_ctl_str
 
-	def sys_ex_msgs(self, flags):
+	def sysex_msgs(self, flags):
 		byte_masks = (0xFF00, 0x00FF)
-		sys_ex_msgs_str = ''
+		sysex_msgs_str = ''
 		for i in range(2):
-			sys_ex_msgs_str += self._xmit_rcv_labels[i] + ':'
+			sysex_msgs_str += self._xmit_rcv_labels[i] + ':'
 			if flags & byte_masks[i] == 0:
-				sys_ex_msgs_str += self._off_on_labels[0]
+				sysex_msgs_str += self._off_on_labels[0]
 			else:
-				sys_ex_msgs_str += self._off_on_labels[1]
+				sysex_msgs_str += self._off_on_labels[1]
 			if i == 0:
-				sys_ex_msgs_str += ' '
-		return sys_ex_msgs_str
+				sysex_msgs_str += ' '
+		return sysex_msgs_str
 
 	def __str__(self):
 
@@ -101,8 +101,8 @@ class MIDISettings:
 			f'{self._setting_labels[5]}{self._off_on_labels[self._xpose_midi]}\n' +				\
 			f'{self._setting_labels[6]}{self._start_stop_labels[self._start_stop]}\n' +			\
 			f'{self._setting_labels[7]}{local_ctl_str}' +										\
-			f'{self._setting_labels[8]}{self.sys_ex_msgs(self._sys_ex_msgs & 0x8080)}\n' +		\
-			f'{self._setting_labels[9]}{self.sys_ex_msgs(self._sys_ex_msgs & 0x0808)}\n' +		\
+			f'{self._setting_labels[8]}{self.sysex_msgs(self._sysex_msgs & 0x8080)}\n' +		\
+			f'{self._setting_labels[9]}{self.sysex_msgs(self._sysex_msgs & 0x0808)}\n' +		\
 			f'\n\n{self._may_be_inaccurate}\n'
 
 def main(genos_file, analyze):
