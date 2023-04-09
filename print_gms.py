@@ -16,41 +16,44 @@ class MIDISettings:
 	TRANSMIT_CLOCK_LGTH =	  1
 	TRANSPOSE_MIDI_LGTH =  	  1
 	START_STOP =  			  1
-	SYS_EX_MSGS =			  1
+	SYS_EX_MSGS =			  1		# one 2-byte short
 	PADDING_LAST =			SETTINGS_LGTH - SETTINGS_NAME_LGTH - PADDING1 - LOCAL_CONTROL \
 							- CLOCK_LGTH - TRANSMIT_CLOCK_LGTH - TRANSPOSE_MIDI_LGTH - START_STOP \
 							- 2 * SYS_EX_MSGS
 
-	separator = '-------------------------------------------------------------------------\n'
+	separator = '----------------------------------------------------------------------------\n'
 
-	_sysex_labels = ('System Exclusive Message', 'Chord System Exclusive Message')
-	_setting_labels = ('', 'Genos MIDI Setting', 'Clock', 'Transmit Clock', \
-		    		   'Transpose MIDI Input', 'Start/Stop',  'Local Control', \
-					   _sysex_labels[0], _sysex_labels[1])
-	_setting_labels = [f'{sl + ":":33s}' for sl in _setting_labels]
-	_setting_labels[0] = ' ' + _setting_labels[0][1:]		# replace colon with space
+	_sysex_labels =			('System Exclusive Message', 'Chord System Exclusive Message')
+	_setting_labels =		('', 'Genos File', 'MIDI Settings', 'Clock', 'Transmit Clock',	\
+		    				 'Transpose MIDI Input', 'Start/Stop',  'Local Control',		\
+							 _sysex_labels[0], _sysex_labels[1])
+	_setting_labels =		[f'{sl + ":":33s}' for sl in _setting_labels]		# pad labels to same width
+	_setting_labels[0] =	' ' + _setting_labels[0][1:]					# replace colon with space
 
-	_clock_labels = ('Internal', 'MIDI A', 'MIDI B', 'USB1', 'USB2', 'Wireless LAN')
-	_off_on_labels = ('Off', 'On')
-	_start_stop_labels = ('Song', 'Style')
-	_local_ctl_labels = ((('Left', 0x10), ('Right1', 0x08), ('Right2', 0x04), ('Right3', 0x02)), \
-		    			 (('Style', 0x40), ('Song', 0x80), ('M.Pad', 0x20)))
-	_xmit_rcv_labels = ('Transmit', 'Receive')
-	_not_always_accurate = f'* "{_sysex_labels[0]}" and "{_sysex_labels[1]}" settings may be inaccurate - see Jupyter Notebook'
+	_clock_labels =			('Internal', 'MIDI A', 'MIDI B', 'USB1', 'USB2', 'Wireless LAN')
+	_off_on_labels =		('Off', 'On')
+	_start_stop_labels =	('Song', 'Style')
+	_local_ctl_labels =		((('Left', 0x10), ('Right1', 0x08), ('Right2', 0x04), ('Right3', 0x02)), \
+		    				 (('Style', 0x40), ('Song', 0x80), ('M.Pad', 0x20)))
+	_xmit_rcv_labels =		('Transmit', 'Receive')
+	_may_be_inaccurate =	f'* "{_sysex_labels[0]}" and "{_sysex_labels[1]}"' \
+							+ '\n    may be inaccurate - see Jupyter Notebook'
 
-	def __init__(self, settings_bytes):
+	def __init__(self, file_name, settings_bytes):
+
+		self._file_name = file_name
 
 		settings_name_bytes, self._local_control, self._clock, self._xmit_clock, \
 		self._xpose_midi, self._start_stop, self._sys_ex_msgs = \
 			struct.unpack(f'> \
-		 					{self.SETTINGS_NAME_LGTH}s \
-							{self.PADDING1}x \
-		 					{self.LOCAL_CONTROL}B \
-		 					{self.CLOCK_LGTH}B \
-		 					{self.TRANSMIT_CLOCK_LGTH}B \
-		 					{self.TRANSPOSE_MIDI_LGTH}B \
-		 					{self.START_STOP}B \
-		 					{self.SYS_EX_MSGS}H \
+		 					{self.SETTINGS_NAME_LGTH}s			\
+							{self.PADDING1}x					\
+		 					{self.LOCAL_CONTROL}B				\
+		 					{self.CLOCK_LGTH}B					\
+		 					{self.TRANSMIT_CLOCK_LGTH}B			\
+		 					{self.TRANSPOSE_MIDI_LGTH}B			\
+		 					{self.START_STOP}B					\
+		 					{self.SYS_EX_MSGS}H					\
 		 					{self.PADDING_LAST}x',
 						  settings_bytes)
 
@@ -90,16 +93,17 @@ class MIDISettings:
 		local_ctl_str += self.local_ctl(self._local_control, self._local_ctl_labels[1])
 		
 		return																					\
-			f'{self._setting_labels[1]}{self.name}\n' + 										\
+			f'{self._setting_labels[1]}{self._file_name}\n' + 										\
+			f'{self._setting_labels[2]}{self.name}\n' + 										\
 			self.separator +																	\
-			f'{self._setting_labels[2]}{self._clock_labels[self._clock]}\n' +					\
-			f'{self._setting_labels[3]}{self._off_on_labels[self._xmit_clock]}\n' +				\
-			f'{self._setting_labels[4]}{self._off_on_labels[self._xpose_midi]}\n' +				\
-			f'{self._setting_labels[5]}{self._start_stop_labels[self._start_stop]}\n' +			\
-			f'{self._setting_labels[6]}{local_ctl_str}' +										\
-			f'{self._setting_labels[7]}{self.sys_ex_msgs(self._sys_ex_msgs & 0x8080)}\n' +		\
-			f'{self._setting_labels[8]}{self.sys_ex_msgs(self._sys_ex_msgs & 0x0808)}\n' +		\
-			f'\n\n{self._not_always_accurate}\n'
+			f'{self._setting_labels[3]}{self._clock_labels[self._clock]}\n' +					\
+			f'{self._setting_labels[4]}{self._off_on_labels[self._xmit_clock]}\n' +				\
+			f'{self._setting_labels[5]}{self._off_on_labels[self._xpose_midi]}\n' +				\
+			f'{self._setting_labels[6]}{self._start_stop_labels[self._start_stop]}\n' +			\
+			f'{self._setting_labels[7]}{local_ctl_str}' +										\
+			f'{self._setting_labels[8]}{self.sys_ex_msgs(self._sys_ex_msgs & 0x8080)}\n' +		\
+			f'{self._setting_labels[9]}{self.sys_ex_msgs(self._sys_ex_msgs & 0x0808)}\n' +		\
+			f'\n\n{self._may_be_inaccurate}\n'
 
 def main(genos_file, analyze):
 
@@ -144,7 +148,7 @@ def main(genos_file, analyze):
 		if settings_flags & settings_mask != 0:
 
 			# unpack settings bytes
-			settings = MIDISettings(settings_bytes)
+			settings = MIDISettings(genos_file_name, settings_bytes)
 
 			if analyze:
 				# write out settings bytes for comparison
@@ -155,7 +159,6 @@ def main(genos_file, analyze):
 			# print settings info
 			settings_txt_file = open(os.path.join(settings_file_dir, settings.name + '.txt'), 'w')
 			sys.stdout = settings_txt_file
-			print(f'{genos_file_name}: {settings.name}')
 			print(f'{settings.name}', file=console_out)
 			print(settings)
 			settings_txt_file.close()
