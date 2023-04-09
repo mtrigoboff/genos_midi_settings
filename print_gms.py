@@ -17,43 +17,43 @@ class MIDISettings:
 	TRANSPOSE_MIDI_LGTH =  	  1
 	START_STOP =  			  1
 	SYSEX_MSGS =			  1		# one 2-byte short
-	PADDING_LAST =			SETTINGS_LGTH - SETTINGS_NAME_LGTH - PADDING1 - LOCAL_CONTROL \
-							- CLOCK_LGTH - TRANSMIT_CLOCK_LGTH - TRANSPOSE_MIDI_LGTH - START_STOP \
+	PADDING_LAST =			SETTINGS_LGTH - SETTINGS_NAME_LGTH - PADDING1 - LOCAL_CONTROL				\
+							- CLOCK_LGTH - TRANSMIT_CLOCK_LGTH - TRANSPOSE_MIDI_LGTH - START_STOP		\
 							- 2 * SYSEX_MSGS
 
 	separator = '----------------------------------------------------------------------------\n'
 
 	_sysex_labels =			('System Exclusive Message', 'Chord System Exclusive Message')
-	_setting_labels =		('', 'Genos File', 'MIDI Settings', 'Clock', 'Transmit Clock',	\
-		    				 'Transpose MIDI Input', 'Start/Stop',  'Local Control',		\
+	_setting_labels =		('', 'Genos File', 'MIDI Settings', 'Clock', 'Transmit Clock',				\
+		    				 'Transpose MIDI Input', 'Start/Stop',  'Local Control',					\
 							 _sysex_labels[0], _sysex_labels[1])
 	_setting_labels =		[f'{sl + ":":33s}' for sl in _setting_labels]		# pad labels to same width
-	_setting_labels[0] =	' ' + _setting_labels[0][1:]					# replace colon with space
+	_setting_labels[0] =	' ' + _setting_labels[0][1:]						# replace colon with space
 
 	_clock_labels =			('Internal', 'MIDI A', 'MIDI B', 'USB1', 'USB2', 'Wireless LAN')
 	_off_on_labels =		('Off', 'On')
 	_start_stop_labels =	('Song', 'Style')
-	_local_ctl_labels =		((('Left', 0x10), ('Right1', 0x08), ('Right2', 0x04), ('Right3', 0x02)), \
+	_local_ctl_labels =		((('Left', 0x10), ('Right1', 0x08), ('Right2', 0x04), ('Right3', 0x02)),	\
 		    				 (('Style', 0x40), ('Song', 0x80), ('M.Pad', 0x20)))
 	_xmit_rcv_labels =		('Transmit', 'Receive')
-	_may_be_inaccurate =	f'* "{_sysex_labels[0]}" and "{_sysex_labels[1]}"' \
+	_may_be_inaccurate =	f'* "{_sysex_labels[0]}" and "{_sysex_labels[1]}"'		\
 							+ '\n    may be inaccurate - see Jupyter Notebook'
 
 	def __init__(self, file_name, settings_bytes):
 
 		self._file_name = file_name
 
-		settings_name_bytes, self._local_control, self._clock, self._xmit_clock, \
-		self._xpose_midi, self._start_stop, self._sysex_msgs = \
-			struct.unpack(f'> \
-		 					{self.SETTINGS_NAME_LGTH}s			\
-							{self.PADDING1}x					\
-		 					{self.LOCAL_CONTROL}B				\
-		 					{self.CLOCK_LGTH}B					\
-		 					{self.TRANSMIT_CLOCK_LGTH}B			\
-		 					{self.TRANSPOSE_MIDI_LGTH}B			\
-		 					{self.START_STOP}B					\
-		 					{self.SYSEX_MSGS}H					\
+		settings_name_bytes, self._local_control, self._clock, self._xmit_clock,	\
+		self._xpose_midi, self._start_stop, self._sysex_msgs =						\
+			struct.unpack(f'> 														\
+		 					{self.SETTINGS_NAME_LGTH}s								\
+							{self.PADDING1}x										\
+		 					{self.LOCAL_CONTROL}B									\
+		 					{self.CLOCK_LGTH}B										\
+		 					{self.TRANSMIT_CLOCK_LGTH}B								\
+		 					{self.TRANSPOSE_MIDI_LGTH}B								\
+		 					{self.START_STOP}B										\
+		 					{self.SYSEX_MSGS}H										\
 		 					{self.PADDING_LAST}x',
 						  settings_bytes)
 
@@ -88,9 +88,9 @@ class MIDISettings:
 
 	def __str__(self):
 
-		local_ctl_str = self.local_ctl(self._local_control, self._local_ctl_labels[0])
-		local_ctl_str += self._setting_labels[0]
-		local_ctl_str += self.local_ctl(self._local_control, self._local_ctl_labels[1])
+		local_ctl_str = self.local_ctl(self._local_control, self._local_ctl_labels[0])	 		\
+						+ self._setting_labels[0]												\
+						+ self.local_ctl(self._local_control, self._local_ctl_labels[1])
 		
 		return																					\
 			f'{self._setting_labels[1]}{self._file_name}\n' + 									\
