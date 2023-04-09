@@ -93,7 +93,7 @@ class MIDISettings:
 		local_ctl_str += self.local_ctl(self._local_control, self._local_ctl_labels[1])
 		
 		return																					\
-			f'{self._setting_labels[1]}{self._file_name}\n' + 										\
+			f'{self._setting_labels[1]}{self._file_name}\n' + 									\
 			f'{self._setting_labels[2]}{self.name}\n' + 										\
 			self.separator +																	\
 			f'{self._setting_labels[3]}{self._clock_labels[self._clock]}\n' +					\
