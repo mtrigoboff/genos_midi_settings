@@ -190,14 +190,14 @@ class MIDISettings:
 			f'{self._setting_labels[13]}{self.on_bass_note_chord_detect(self._chord_detect)}' +				\
 			f'\n\n{self._may_be_inaccurate}'
 
-def main(genos_file, analyze):
+def main(genos_file, analyze=False):
 
 	global console_out
 	console_out = sys.stdout
 
 	genos_file_path, genos_file_name = os.path.split(genos_file)
 	genos_file_root, genos_file_ext = os.path.splitext(genos_file_name)
-	print(genos_file_root, file=console_out)
+	print(f'Genos File: {genos_file_name}', file=console_out)
 
 	# open Genos file
 	if genos_file_ext != '.msu':
@@ -205,14 +205,15 @@ def main(genos_file, analyze):
 	try:
 		genos_file_stream = open(genos_file, 'rb')
 	except FileNotFoundError:
-		return f'could not open file: {genos_file_path}'
+		return f'could not open file: {genos_file}'
 
 	# read file header
 	hdr_str, settings_flags = \
 		struct.unpack(f'> {HDR_STR_LGTH}s {HDR_FLAGS_LGTH}H 2x',
 					  genos_file_stream.read(HDR_LGTH))
 	flags_str = f'{settings_flags:2X}'.zfill(4)				# 4 hex digits via zero fill if needed
-	print(f'{hdr_str}, 0x{flags_str}')
+	if analyze:
+		print(f'{hdr_str}, 0x{flags_str}')
 
 	# set up directory for output files
 	settings_file_dir = os.path.join(genos_file_path, genos_file_root)
@@ -245,7 +246,7 @@ def main(genos_file, analyze):
 			# print settings info
 			settings_txt_file = open(os.path.join(settings_file_dir, settings.name + '.txt'), 'w')
 			sys.stdout = settings_txt_file
-			print(f'{settings.name}', file=console_out)
+			print(f'Setting:    {settings.name}', file=console_out)
 			print(settings)
 			settings_txt_file.close()
 
@@ -256,6 +257,9 @@ def main(genos_file, analyze):
 	return ''
 
 if __name__ == '__main__':
-	ret_str = main(sys.argv[1], bool(sys.argv[2]))
+	if len(sys.argv) > 2:
+		ret_str = main(sys.argv[1], True)
+	else:
+		ret_str = main(sys.argv[1])
 	if ret_str != '':
 		print(f'main() -> {ret_str}')

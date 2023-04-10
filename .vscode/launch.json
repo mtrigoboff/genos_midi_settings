@@ -11,7 +11,7 @@
 			"program": "${file}",
 			"args": [
 				"genos_files/obn_cd.msu",
-				"True"
+				"analyze"
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true
@@ -22,8 +22,7 @@
 			"request": "launch",
 			"program": "${file}",
 			"args": [
-				"genos_files/obn_cd.msu",
-				"False"
+				"genos_files/obn_cd.msu"
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true
