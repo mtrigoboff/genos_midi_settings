@@ -5,11 +5,26 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Python: Current File",
+			"name": "analyze",
 			"type": "python",
 			"request": "launch",
 			"program": "${file}",
-			"args": ["genos_files/xr.msu", "True"],
+			"args": [
+				"genos_files/obn_cd.msu",
+				"True"
+			],
+			"console": "integratedTerminal",
+			"justMyCode": true
+		},
+		{
+			"name": "normal",
+			"type": "python",
+			"request": "launch",
+			"program": "${file}",
+			"args": [
+				"genos_files/obn_cd.msu",
+				"False"
+			],
 			"console": "integratedTerminal",
 			"justMyCode": true
 		}
