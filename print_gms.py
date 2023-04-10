@@ -37,9 +37,11 @@ class MIDISettings:
 	_local_ctl_labels =		((('Left', 0x10), ('Right1', 0x08), ('Right2', 0x04), ('Right3', 0x02)),	\
 		    				 (('Style', 0x40), ('Song', 0x80), ('M.Pad', 0x20)))
 	_xmit_rcv_labels =		('Transmit', 'Receive')
+
 	_may_be_inaccurate =	f'* "{_sysex_labels[0]}" and "{_sysex_labels[1]}"'							\
 							+ '\n    may be inaccurate - see Jupyter Notebook'
-	_part_labels =			[f'Right{i}' for i in range(1, 4)]											\
+	
+	_xmit_part_labels =		['Off'] + [f'Right{i}' for i in range(1, 4)]								\
 							+ ['Left', 'Upper', 'Lower']												\
 							+ [f'Multi Pad{i}' for i in range(1, 5)]									\
 							+ [f'Style Rhythm{i}' for i in range(1, 3)]									\
@@ -48,7 +50,13 @@ class MIDISettings:
 							+ ['Style Pad']																\
 							+ [f'Style Phrase{i}' for i in range(1, 3)]									\
 							+ [f'Song Ch{i}' for i in range(1, 17)]
-
+	
+	_rcv_part_labels_p1 =	['Off', 'Song'] + [f'Right{i}' for i in range(1, 4)]						\
+							+ ['Left', 'Keyboard'] + [f'Style Rhythm{i}' for i in range(1, 3)]			\
+							+ ['Style Bass'] + [f'Style Chord{i}' for i in range(1, 3)]					\
+							+ ['Style Pad'] + [f'Style Phrase{i}' for i in range(1, 3)]					\
+							+ [f'Extra Part{i}' for i in range(1, 6)]
+	
 	_channel_labels =		['Off'] + [f'Port{p} Ch{c}' for p in range(1, 3) for c in range(1, 17)]
 
 	def __init__(self, file_name, settings_bytes):
@@ -100,15 +108,25 @@ class MIDISettings:
 				sysex_msgs_str += ' '
 		return sysex_msgs_str
 	
-	def transmit_receive(self, flags):
+	def transmit(self, flags):
 		part_channel_str = ''
 		c = 0
-		for part_label in self._part_labels:
+		for part_label in self._xmit_part_labels[1:]:
 			if c > 0:
 				part_channel_str += self._setting_labels[0]
 			part_channel_str += f'{part_label:16}{self._channel_labels[flags[c]]}\n'
 			c += 2
 		return part_channel_str
+
+	def receive(self, flags):
+		channel_part_str = ''
+		p = 0
+		for channel_label in self._channel_labels[1:]:
+			if p > 0:
+				channel_part_str += self._setting_labels[0]
+			channel_part_str += f'{channel_label:16}{self._rcv_part_labels_p1[flags[p]]}\n'
+			p += 2
+		return channel_part_str
 
 	def __str__(self):
 
@@ -116,8 +134,6 @@ class MIDISettings:
 						+ self._setting_labels[0]												\
 						+ self.local_ctl(self._local_control, self._local_ctl_labels[1])
 		
-		self.transmit_receive(self._transmit)
-
 		return																					\
 			f'{self._setting_labels[1]}{self._file_name}\n' + 									\
 			f'{self._setting_labels[2]}{self.name}\n' + 										\
@@ -129,8 +145,8 @@ class MIDISettings:
 			f'{self._setting_labels[7]}{local_ctl_str}' +										\
 			f'{self._setting_labels[8]}{self.sysex_msgs(self._sysex_msgs & 0x8080)}\n' +		\
 			f'{self._setting_labels[9]}{self.sysex_msgs(self._sysex_msgs & 0x0808)}\n' +		\
-			f'{self._setting_labels[10]}{self.transmit_receive(self._transmit)}' +				\
-			f'{self._setting_labels[11]}{self.transmit_receive(self._receive)}\n' +				\
+			f'{self._setting_labels[10]}{self.transmit(self._transmit)}' +						\
+			f'{self._setting_labels[11]}{self.receive(self._receive)}\n' +						\
 			f'\n\n{self._may_be_inaccurate}\n'
 
 def main(genos_file, analyze):
