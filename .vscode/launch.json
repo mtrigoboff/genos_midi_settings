@@ -9,7 +9,7 @@
 			"type": "python",
 			"request": "launch",
 			"program": "${file}",
-			"args": ["genos_files/smx.msu", "True"],
+			"args": ["genos_files/off.msu", "True"],
 			"console": "integratedTerminal",
 			"justMyCode": true
 		}

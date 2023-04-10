@@ -17,16 +17,17 @@ class MIDISettings:
 	TRANSPOSE_MIDI_LGTH =  	  1
 	START_STOP =  			  1
 	SYSEX_MSGS =			  1		# one 2-byte short
+	TRANSMIT_RECEIVE = 		 34		# 2-byte shorts
 	PADDING_LAST =			SETTINGS_LGTH - SETTINGS_NAME_LGTH - PADDING1 - LOCAL_CONTROL				\
 							- CLOCK_LGTH - TRANSMIT_CLOCK_LGTH - TRANSPOSE_MIDI_LGTH - START_STOP		\
-							- 2 * SYSEX_MSGS
+							- 2 * SYSEX_MSGS - 4 * TRANSMIT_RECEIVE
 
 	separator = '----------------------------------------------------------------------------\n'
 
 	_sysex_labels =			('System Exclusive Message', 'Chord System Exclusive Message')
 	_setting_labels =		('', 'Genos File', 'MIDI Settings', 'Clock', 'Transmit Clock',				\
 		    				 'Transpose MIDI Input', 'Start/Stop',  'Local Control',					\
-							 _sysex_labels[0], _sysex_labels[1])
+							 _sysex_labels[0], _sysex_labels[1], 'Transmit', 'Receive')
 	_setting_labels =		[f'{sl + ":":33s}' for sl in _setting_labels]		# pad labels to same width
 	_setting_labels[0] =	' ' + _setting_labels[0][1:]						# replace colon with space
 
@@ -36,24 +37,37 @@ class MIDISettings:
 	_local_ctl_labels =		((('Left', 0x10), ('Right1', 0x08), ('Right2', 0x04), ('Right3', 0x02)),	\
 		    				 (('Style', 0x40), ('Song', 0x80), ('M.Pad', 0x20)))
 	_xmit_rcv_labels =		('Transmit', 'Receive')
-	_may_be_inaccurate =	f'* "{_sysex_labels[0]}" and "{_sysex_labels[1]}"'		\
+	_may_be_inaccurate =	f'* "{_sysex_labels[0]}" and "{_sysex_labels[1]}"'							\
 							+ '\n    may be inaccurate - see Jupyter Notebook'
+	_part_labels =			[f'Right{i}' for i in range(1, 4)]											\
+							+ ['Left', 'Upper', 'Lower']												\
+							+ [f'Multi Pad{i}' for i in range(1, 5)]									\
+							+ [f'Style Rhythm{i}' for i in range(1, 3)]									\
+							+ ['Style Bass']															\
+							+ [f'Style Chord{i}' for i in range(1, 3)]									\
+							+ ['Style Pad']																\
+							+ [f'Style Phrase{i}' for i in range(1, 3)]									\
+							+ [f'Song Ch{i}' for i in range(1, 17)]
+
+	_channel_labels =		['Off'] + [f'Port{p} Ch{c}' for p in range(1, 3) for c in range(1, 17)]
 
 	def __init__(self, file_name, settings_bytes):
 
 		self._file_name = file_name
 
-		settings_name_bytes, self._local_control, self._clock, self._xmit_clock,	\
-		self._xpose_midi, self._start_stop, self._sysex_msgs =						\
-			struct.unpack(f'> 														\
-		 					{self.SETTINGS_NAME_LGTH}s								\
-							{self.PADDING1}x										\
-		 					{self.LOCAL_CONTROL}B									\
-		 					{self.CLOCK_LGTH}B										\
-		 					{self.TRANSMIT_CLOCK_LGTH}B								\
-		 					{self.TRANSPOSE_MIDI_LGTH}B								\
-		 					{self.START_STOP}B										\
-		 					{self.SYSEX_MSGS}H										\
+		settings_name_bytes, self._local_control, self._clock, self._xmit_clock,						\
+		self._xpose_midi, self._start_stop, self._sysex_msgs, self._transmit, self._receive =			\
+			struct.unpack(f'> 																			\
+		 					{self.SETTINGS_NAME_LGTH}s													\
+							{self.PADDING1}x															\
+		 					{self.LOCAL_CONTROL}B														\
+		 					{self.CLOCK_LGTH}B															\
+		 					{self.TRANSMIT_CLOCK_LGTH}B													\
+		 					{self.TRANSPOSE_MIDI_LGTH}B													\
+		 					{self.START_STOP}B															\
+		 					{self.SYSEX_MSGS}H															\
+							{2 * self.TRANSMIT_RECEIVE}s												\
+							{2 * self.TRANSMIT_RECEIVE}s												\
 		 					{self.PADDING_LAST}x',
 						  settings_bytes)
 
@@ -79,12 +93,22 @@ class MIDISettings:
 		for i in range(2):
 			sysex_msgs_str += self._xmit_rcv_labels[i] + ':'
 			if flags & byte_masks[i] == 0:
-				sysex_msgs_str += self._off_on_labels[0]
+				sysex_msgs_str += f'{self._off_on_labels[0]:3s}'
 			else:
-				sysex_msgs_str += self._off_on_labels[1]
+				sysex_msgs_str += f'{self._off_on_labels[1]:3s}'
 			if i == 0:
 				sysex_msgs_str += ' '
 		return sysex_msgs_str
+	
+	def transmit_receive(self, flags):
+		part_channel_str = ''
+		c = 0
+		for part_label in self._part_labels:
+			if c > 0:
+				part_channel_str += self._setting_labels[0]
+			part_channel_str += f'{part_label:16}{self._channel_labels[flags[c]]}\n'
+			c += 2
+		return part_channel_str
 
 	def __str__(self):
 
@@ -92,6 +116,8 @@ class MIDISettings:
 						+ self._setting_labels[0]												\
 						+ self.local_ctl(self._local_control, self._local_ctl_labels[1])
 		
+		self.transmit_receive(self._transmit)
+
 		return																					\
 			f'{self._setting_labels[1]}{self._file_name}\n' + 									\
 			f'{self._setting_labels[2]}{self.name}\n' + 										\
@@ -103,10 +129,13 @@ class MIDISettings:
 			f'{self._setting_labels[7]}{local_ctl_str}' +										\
 			f'{self._setting_labels[8]}{self.sysex_msgs(self._sysex_msgs & 0x8080)}\n' +		\
 			f'{self._setting_labels[9]}{self.sysex_msgs(self._sysex_msgs & 0x0808)}\n' +		\
+			f'{self._setting_labels[10]}{self.transmit_receive(self._transmit)}' +				\
+			f'{self._setting_labels[11]}{self.transmit_receive(self._receive)}\n' +				\
 			f'\n\n{self._may_be_inaccurate}\n'
 
 def main(genos_file, analyze):
 
+	global console_out
 	console_out = sys.stdout
 
 	genos_file_path, genos_file_name = os.path.split(genos_file)
