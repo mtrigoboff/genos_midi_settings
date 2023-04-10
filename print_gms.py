@@ -201,11 +201,11 @@ def main(genos_file, analyze=False):
 
 	# open Genos file
 	if genos_file_ext != '.msu':
-		return 'incorrect file type'
+		return f'incorrect file type: "{genos_file_ext}"'
 	try:
 		genos_file_stream = open(genos_file, 'rb')
 	except FileNotFoundError:
-		return f'could not open file: {genos_file}'
+		return f'could not open file: "{genos_file}"'
 
 	# read file header
 	hdr_str, settings_flags = \
@@ -213,7 +213,7 @@ def main(genos_file, analyze=False):
 					  genos_file_stream.read(HDR_LGTH))
 	flags_str = f'{settings_flags:2X}'.zfill(4)				# 4 hex digits via zero fill if needed
 	if analyze:
-		print(f'{hdr_str}, 0x{flags_str}')
+		print(f'{hdr_str}, 0x{flags_str}', file=console_out)
 
 	# set up directory for output files
 	settings_file_dir = os.path.join(genos_file_path, genos_file_root)
@@ -262,4 +262,4 @@ if __name__ == '__main__':
 	else:
 		ret_str = main(sys.argv[1])
 	if ret_str != '':
-		print(f'main() -> {ret_str}')
+		print(f'main() -> {ret_str}', file=console_out)
