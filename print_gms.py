@@ -216,7 +216,7 @@ def main(genos_file, analyze=False):
 		print(f'{hdr_str}, 0x{flags_str}', file=console_out)
 
 	# set up directory for output files
-	settings_file_dir = os.path.join(genos_file_path, genos_file_root)
+	settings_file_dir = os.path.join(genos_file_path, genos_file_name + '.settings')
 	if os.path.isdir(settings_file_dir):
 		if not analyze:
 			for root, _, files in os.walk(settings_file_dir):	# delete previous directory contents
