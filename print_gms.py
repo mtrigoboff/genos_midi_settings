@@ -190,7 +190,7 @@ class MIDISettings:
 			f'{self._setting_labels[13]}{self.on_bass_note_chord_detect(self._chord_detect)}' +				\
 			f'\n\n{self._may_be_inaccurate}'
 
-def print_genos_midi_settings(genos_file, analyze=False):
+def print_genos_midi_settings(genos_file, folder_suffix, analyze=False):
 
 	global console_out
 	console_out = sys.stdout
@@ -216,7 +216,7 @@ def print_genos_midi_settings(genos_file, analyze=False):
 		print(f'{hdr_str}, 0x{flags_str}', file=console_out)
 
 	# set up directory for output files
-	settings_file_dir = os.path.join(genos_file_path, genos_file_name + '.settings')
+	settings_file_dir = os.path.join(genos_file_path, genos_file_name + folder_suffix)
 	if os.path.isdir(settings_file_dir):
 		if not analyze:
 			for root, _, files in os.walk(settings_file_dir):	# delete previous directory contents
@@ -258,9 +258,9 @@ def print_genos_midi_settings(genos_file, analyze=False):
 	return ''
 
 if __name__ == '__main__':
-	if len(sys.argv) > 2:
-		ret_str = print_genos_midi_settings(sys.argv[1], True)
+	if len(sys.argv) > 3:
+		ret_str = print_genos_midi_settings(sys.argv[1], sys.argv[2], True)
 	else:
-		ret_str = print_genos_midi_settings(sys.argv[1])
+		ret_str = print_genos_midi_settings(sys.argv[1], sys.argv[2])
 	if ret_str != '':
 		print(f'print_genos_midi_settings() -> {ret_str}', file=console_out)
