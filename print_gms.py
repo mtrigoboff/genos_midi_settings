@@ -190,7 +190,7 @@ class MIDISettings:
 			f'{self._setting_labels[13]}{self.on_bass_note_chord_detect(self._chord_detect)}' +				\
 			f'\n\n{self._may_be_inaccurate}'
 
-def main(genos_file, analyze=False):
+def print_genos_midi_settings(genos_file, analyze=False):
 
 	global console_out
 	console_out = sys.stdout
@@ -249,6 +249,7 @@ def main(genos_file, analyze=False):
 			print(f'Setting:    {settings.name}', file=console_out)
 			print(settings)
 			settings_txt_file.close()
+			sys.stdout = console_out
 
 		settings_mask <<= 1
 
@@ -258,8 +259,8 @@ def main(genos_file, analyze=False):
 
 if __name__ == '__main__':
 	if len(sys.argv) > 2:
-		ret_str = main(sys.argv[1], True)
+		ret_str = print_genos_midi_settings(sys.argv[1], True)
 	else:
-		ret_str = main(sys.argv[1])
+		ret_str = print_genos_midi_settings(sys.argv[1])
 	if ret_str != '':
-		print(f'main() -> {ret_str}', file=console_out)
+		print(f'print_genos_midi_settings() -> {ret_str}', file=console_out)
