@@ -12,8 +12,6 @@ Since you can have only 10 user templates at a time, it's important to make sure
 
 The Genos allows you to save a set of up to 10 MIDI templates in a **.msu** file. You can do it on the Utility page described on p. 159 of the Genos Refernce Manual:
 
-(*There is an image of that page below. I have noticed that, occasionally, images included in this Jupyter notebook may not appear. Hopefully in that case the text is explicit enough to enable your successful use of the notebook.*)
-
 ![Genos utility Setup Files backup page](https://drive.google.com/uc?export=view&id=1Q_G-ITNfeIFzA8mgwGFJOlC29V4lahQs)
 
 It occurred to me that I could write code to read in a **.msu** file, and print out each of its MIDI templates as a text file. This would allow someone to look at all of the settings at once for each of the templates, which would make it much easier to compare templates with each other.
