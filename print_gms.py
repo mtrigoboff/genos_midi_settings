@@ -27,7 +27,7 @@ class MIDISettings:
 							- 2 * SYSEX_MSGS - 2 * TRANSMIT - 2 * RECEIVE - PADDING2						\
 							- 4 * ON_BASS_NOTE - 4 * CHORD_DETECT
 
-	separator = '----------------------------------------------------------------------------\n'
+	seperator = '----------------------------------------------------------------------------\n'
 
 	_sysex_labels =			('System Exclusive Message', 'Chord System Exclusive Message')
 	_setting_labels =		('', 'Genos File', 'MIDI Settings', 'Clock', 'Transmit Clock',					\
@@ -176,7 +176,7 @@ class MIDISettings:
 		return																								\
 			f'{self._setting_labels[1]}{self._file_name}\n' + 												\
 			f'{self._setting_labels[2]}{self.name}\n' + 													\
-			self.separator +																				\
+			self.seperator +																				\
 			f'{self._setting_labels[3]}{self._clock_labels[self._clock]}\n' +								\
 			f'{self._setting_labels[4]}{self._off_on_labels[self._xmit_clock]}\n' +							\
 			f'{self._setting_labels[5]}{self._off_on_labels[self._xpose_midi]}\n' +							\
