@@ -1,9 +1,8 @@
 import os, os.path, struct, sys
 
 # code version number
-version = [2, 0, 0]
-version_str = f'version {version[0]}.{version[1]}.{version[2]}'
-app_hdr_str = f'Print Genos2 MIDI Settings File  ({version_str})'
+version = [1, 0, 0]
+app_hdr_str = f'Print Genos2 MIDI Settings File  ({version[0]}.{version[1]}.{version[2]})'
 
 # file layout
 FILE_LGTH =			 	 	298		# == 0x024
