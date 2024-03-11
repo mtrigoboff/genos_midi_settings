@@ -1,5 +1,10 @@
 import os, os.path, struct, sys
 
+# code version
+version = [2, 0, 0]
+version_str = f'version {version[0]}.{version[1]}.{version[2]}'
+app_hdr_str = f'Print Genos2 MIDI Settings File  ({version_str})'
+
 # file layout
 FILE_LGTH =			 	 	298		# == 0x024
 HDR_LGTH =			 	 	35		# == 0x024
@@ -154,6 +159,7 @@ class MIDISettings:
 						+ self.local_ctl(self._local_control, self._local_ctl_labels[1])
 		
 		return																								\
+			app_hdr_str + '\n'																				\
 			f'{self._setting_labels[1]}{self._file_name}\n' + 												\
 			self.seperator +																				\
 			f'{self._setting_labels[3]}{self._clock_labels[self._clock]}\n' +								\
@@ -175,6 +181,8 @@ def print_genos_midi_settings(genos_file, analyze=False):
 
 	genos_file_path, genos_file_name = os.path.split(genos_file)
 	genos_file_root, genos_file_ext = os.path.splitext(genos_file_name)
+
+	print(app_hdr_str)
 	print(f'Genos2 File: {genos_file_name}', file=console_out)
 
 	# open Genos file
