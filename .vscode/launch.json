@@ -6,28 +6,16 @@
 	"configurations": [
 
 		{
-			"name": "analyze",
-			"type": "python",
-			"request": "launch",
-			"program": "${file}",
-			"args": [
-				"genos_files/obn_cd.msu",
-				".analyze"
-			],
-			"console": "integratedTerminal",
-			"justMyCode": true
-		},
-		{
 			"name": "normal",
 			"type": "python",
 			"request": "launch",
 			"program": "${file}",
 			"args": [
-				"genos_files/midi_10-10-2023.msu",
-				".settings"
+				"genos2_midi_files/lc_all.mis"
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true
 		}
+
 	]
 }
