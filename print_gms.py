@@ -2,7 +2,7 @@ import os, os.path, struct, sys
 
 # code version number
 version = [1, 0, 0]
-app_hdr_str = f'Print Genos2 MIDI Settings File  ({version[0]}.{version[1]}.{version[2]})'
+app_hdr_str = f'Print Genos2 MIDI Settings File  (version {version[0]}.{version[1]}.{version[2]})'
 
 # file layout
 FILE_LGTH =			 	 	298
@@ -99,7 +99,7 @@ class MIDISettings:
 		return local_ctl_str
 
 	def sysex(self, xmit, rcv):
-		return self._xmit_rcv_labels[0] + ':' + self._off_on_labels[xmit]									\
+		return self._xmit_rcv_labels[0] + ':' + f'{self._off_on_labels[xmit]:3s}'							\
 			   + ' ' + self._xmit_rcv_labels[1] + ':' + self._off_on_labels[rcv]
 
 	def transmit(self, flags):
