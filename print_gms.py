@@ -5,8 +5,8 @@ version = [1, 0, 0]
 app_hdr_str = f'Print Genos2 MIDI Settings File  ({version[0]}.{version[1]}.{version[2]})'
 
 # file layout
-FILE_LGTH =			 	 	298		# == 0x024
-HDR_LGTH =			 	 	35		# == 0x024
+FILE_LGTH =			 	 	298
+HDR_LGTH =			 	 	35
 
 class MIDISettings:
 
