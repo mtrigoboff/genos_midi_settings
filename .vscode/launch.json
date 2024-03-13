@@ -11,7 +11,7 @@
 			"request": "launch",
 			"program": "${file}",
 			"args": [
-				"genos2_midi_files/lc_all.mis"
+				"test/test3.mis"
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true
