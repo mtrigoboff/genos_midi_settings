@@ -174,7 +174,7 @@ def print_genos_midi_settings(file_path):
 	LINE_LABEL_WIDTH = 27
 
 	genos_file_path, genos_file_name = os.path.split(file_path)
-	genos_file_root, genos_file_ext = os.path.splitext(genos_file_name)
+	genos_file_ext = os.path.splitext(genos_file_name)[1]
 
 	print(app_hdr_str)
 	print(f'{"Genos2 MIDI settings file:":{LINE_LABEL_WIDTH}s} {genos_file_name}')
@@ -196,15 +196,17 @@ def print_genos_midi_settings(file_path):
 	# unpack settings bytes
 	settings = MIDISettings(genos_file_name, settings_bytes)
 
-	# print settings info
-	txt_file_name = os.path.join(genos_file_root + '.txt')
+	# print settings text file
+	txt_file_name = os.path.join(genos_file_name + '.txt')
 	settings_txt_file = open(os.path.join(genos_file_path, txt_file_name), 'w')
 	print(settings, file=settings_txt_file)
 	settings_txt_file.close()
 
 	genos_file_stream.close()
-	return f'{"created text printout:":{LINE_LABEL_WIDTH}s} {txt_file_name}'
+	print(f'{"created text printout:":{LINE_LABEL_WIDTH}s} {txt_file_name}')
+	return txt_file_name
 
+# for use as Python script -- not used from Jupyter notebook
 if __name__ == '__main__':
 	ret_str = print_genos_midi_settings(sys.argv[1])
 	print(ret_str)
