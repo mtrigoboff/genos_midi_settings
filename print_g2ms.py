@@ -169,44 +169,43 @@ class MIDISettings:
 			f'{self._setting_labels[12]}{self.on_bass_note_chord_detect(self._on_bass_note)}' +				\
 			f'{self._setting_labels[13]}{self.on_bass_note_chord_detect(self._chord_detect)}'
 
-def print_genos_midi_settings(file_path):
+def print_genos2_midi_settings(file_path):
 
 	LINE_LABEL_WIDTH = 27
 
-	genos_file_path, genos_file_name = os.path.split(file_path)
-	genos_file_ext = os.path.splitext(genos_file_name)[1]
+	genos2_file_path, genos2_file_name = os.path.split(file_path)
+	genos2_file_root, genos2_file_ext = os.path.splitext(genos2_file_name)
 
 	print(app_hdr_str)
-	print(f'{"Genos2 MIDI settings file:":{LINE_LABEL_WIDTH}s} {genos_file_name}')
+	print(f'{"genos22 MIDI settings file:":{LINE_LABEL_WIDTH}s} {genos2_file_name}')
 
-	# open Genos file
-	if genos_file_ext != '.mis':
-		print(f'{"incorrect file type:":{LINE_LABEL_WIDTH}s} {genos_file_ext}')
+	# open genos2 file
+	if genos2_file_ext != '.mis':
+		print(f'{"incorrect file type:":{LINE_LABEL_WIDTH}s} {genos2_file_ext}')
 	try:
-		genos_file_stream = open(file_path, 'rb')
+		genos2_file_stream = open(file_path, 'rb')
 	except FileNotFoundError:
 		print(f'{"could not open file:":{LINE_LABEL_WIDTH}s} {file_path}')
 
 	# read and ignore file header
-	genos_file_stream.read(HDR_LGTH)
+	genos2_file_stream.read(HDR_LGTH)
 
 	# read MIDI settings from file
-	settings_bytes = genos_file_stream.read(MIDISettings.SETTINGS_LGTH)
+	settings_bytes = genos2_file_stream.read(MIDISettings.SETTINGS_LGTH)
 
 	# unpack settings bytes
-	settings = MIDISettings(genos_file_name, settings_bytes)
+	settings = MIDISettings(genos2_file_name, settings_bytes)
 
 	# print settings text file
-	txt_file_name = os.path.join(genos_file_name + '.txt')
-	settings_txt_file = open(os.path.join(genos_file_path, txt_file_name), 'w')
+	txt_file_name = os.path.join(genos2_file_root + '.txt')
+	settings_txt_file = open(os.path.join(genos2_file_path, txt_file_name), 'w')
 	print(settings, file=settings_txt_file)
 	settings_txt_file.close()
 
-	genos_file_stream.close()
+	genos2_file_stream.close()
 	print(f'{"created text printout:":{LINE_LABEL_WIDTH}s} {txt_file_name}')
 	return txt_file_name
 
 # for use as Python script -- not used from Jupyter notebook
 if __name__ == '__main__':
-	ret_str = print_genos_midi_settings(sys.argv[1])
-	print(ret_str)
+	print(print_genos2_midi_settings(sys.argv[1]))
