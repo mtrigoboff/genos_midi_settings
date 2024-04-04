@@ -1,6 +1,9 @@
+**/*.sav
 genos1_midi_files/**
 genos2_midi_files/**
+genos2_midi_templates/**
 genos2_midi_files_prev/**
 midi_sysex_bug/**
+test/**
 motif2text.py
 printMotifFile.py
