@@ -1,5 +1,5 @@
 # Print Genos MIDI Settings
-*by [Michael Trigoboff](http://spot.pcc.edu/~mtrigobo/personal/music.html)*  
+*by Michael Trigoboff*  
 (*version 1.0*)
 
 ## The Problem
