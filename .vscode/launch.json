@@ -6,12 +6,12 @@
 	"configurations": [
 
 		{
-			"name": "normal",
-			"type": "python",
+			"name": "print_g2_midi",
+			"type": "debugpy",
 			"request": "launch",
 			"program": "${file}",
 			"args": [
-				"test/test3.mis"
+				"genos2_midi_files/Genos Studio On Record.mis"
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true
